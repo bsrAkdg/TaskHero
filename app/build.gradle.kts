@@ -41,11 +41,10 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy {
-        force("com.squareup:javapoet:1.13.0")
-    }
+hilt {
+    enableAggregatingTask = false
 }
+
 
 dependencies {
 
