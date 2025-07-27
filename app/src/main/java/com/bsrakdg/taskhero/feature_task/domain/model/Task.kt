@@ -11,3 +11,5 @@ data class Task(
     val completed: Boolean,
     @PrimaryKey val id: Int? = null
 )
+
+class InvalidTaskException(message: String) : Exception(message)

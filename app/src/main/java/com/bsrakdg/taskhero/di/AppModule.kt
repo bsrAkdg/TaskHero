@@ -7,6 +7,7 @@ import com.bsrakdg.taskhero.feature_task.data.repository.TaskRepositoryImpl
 import com.bsrakdg.taskhero.feature_task.domain.repository.TaskRepository
 import com.bsrakdg.taskhero.feature_task.domain.use_case.DeleteTaskUseCase
 import com.bsrakdg.taskhero.feature_task.domain.use_case.GetAllTasksUseCase
+import com.bsrakdg.taskhero.feature_task.domain.use_case.InsertTaskUseCase
 import com.bsrakdg.taskhero.feature_task.domain.use_case.TasksUseCases
 import dagger.Module
 import dagger.Provides
@@ -39,7 +40,8 @@ object AppModule {
     fun provideTaskUseCases(repository: TaskRepository): TasksUseCases {
         return TasksUseCases(
             getAllTasksUseCase = GetAllTasksUseCase(repository),
-            deleteTaskUseCase = DeleteTaskUseCase(repository)
+            deleteTaskUseCase = DeleteTaskUseCase(repository),
+            insertTaskUseCase = InsertTaskUseCase(repository)
         )
     }
 }

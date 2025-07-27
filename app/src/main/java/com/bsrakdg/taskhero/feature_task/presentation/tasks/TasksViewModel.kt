@@ -34,6 +34,10 @@ class TasksViewModel @Inject constructor(
                     )
                 }
             }
+
+            is TasksEvent.ChangeShowingStatus -> {
+
+            }
         }
     }
 }

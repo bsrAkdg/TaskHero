@@ -23,5 +23,7 @@ interface TaskDao {
     @Delete
     suspend fun deleteTask(task: Task)
 
+    @Query("SELECT * FROM Task WHERE completed = :isCompleted")
+    fun filterTasks(isCompleted: Boolean): Flow<List<Task>>
 
 }

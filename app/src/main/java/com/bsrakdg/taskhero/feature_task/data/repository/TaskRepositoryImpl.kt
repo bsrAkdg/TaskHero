@@ -11,6 +11,8 @@ class TaskRepositoryImpl(
 
     override fun getAllTasks(): Flow<List<Task>> = dao.getAllTasks()
 
+    override fun filterTasks(isCompleted: Boolean): Flow<List<Task>> = dao.filterTasks(isCompleted)
+
     override suspend fun getTaskById(id: Int): Task? = dao.getTaskById(id)
 
     override suspend fun insertTask(task: Task) {
