@@ -129,6 +129,11 @@ fun TaskListScreen(
                             onDeleteClick = {
                                 onEvent.invoke(TasksEvent.DeleteTask(task))
                             },
+                            onItemClick = { task ->
+                                task.id?.let {
+                                    navigate.invoke(it)
+                                }
+                            },
                             onCheckBoxClick = { task, isCompleted ->
                                 onEvent.invoke(TasksEvent.UpdateTaskStatus(task, isCompleted))
                             }

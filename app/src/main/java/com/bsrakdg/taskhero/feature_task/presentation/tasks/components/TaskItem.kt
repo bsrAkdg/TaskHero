@@ -1,5 +1,6 @@
 package com.bsrakdg.taskhero.feature_task.presentation.tasks.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,12 +30,16 @@ fun TaskItem(
     task: Task,
     modifier: Modifier = Modifier,
     onDeleteClick: (task: Task) -> Unit,
+    onItemClick: (task: Task) -> Unit,
     onCheckBoxClick: (task: Task, isCompleted: Boolean) -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .aspectRatio(1.5f)
+            .clickable {
+                onItemClick.invoke(task)
+            }
     ) {
         Column(
             modifier = Modifier
@@ -92,6 +97,7 @@ fun TaskItemPreview() {
             completed = false,
             id = 1
         ),
+        onItemClick = {},
         onDeleteClick = {}
     ) { _, _ -> }
 }
