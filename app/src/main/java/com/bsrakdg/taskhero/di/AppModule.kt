@@ -6,6 +6,7 @@ import com.bsrakdg.taskhero.feature_task.data.data_source.TaskDatabase
 import com.bsrakdg.taskhero.feature_task.data.repository.TaskRepositoryImpl
 import com.bsrakdg.taskhero.feature_task.domain.repository.TaskRepository
 import com.bsrakdg.taskhero.feature_task.domain.use_case.DeleteTaskUseCase
+import com.bsrakdg.taskhero.feature_task.domain.use_case.FilterTasksUseCase
 import com.bsrakdg.taskhero.feature_task.domain.use_case.GetAllTasksUseCase
 import com.bsrakdg.taskhero.feature_task.domain.use_case.InsertTaskUseCase
 import com.bsrakdg.taskhero.feature_task.domain.use_case.TasksUseCases
@@ -41,7 +42,8 @@ object AppModule {
         return TasksUseCases(
             getAllTasksUseCase = GetAllTasksUseCase(repository),
             deleteTaskUseCase = DeleteTaskUseCase(repository),
-            insertTaskUseCase = InsertTaskUseCase(repository)
+            insertTaskUseCase = InsertTaskUseCase(repository),
+            filterTasksUseCase = FilterTasksUseCase(repository)
         )
     }
 }

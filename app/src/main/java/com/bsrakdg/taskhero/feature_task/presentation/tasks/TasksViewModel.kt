@@ -3,9 +3,12 @@ package com.bsrakdg.taskhero.feature_task.presentation.tasks
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bsrakdg.taskhero.feature_task.domain.use_case.TasksUseCases
+import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,6 +19,19 @@ class TasksViewModel @Inject constructor(
 ) : ViewModel() {
     private val _tasksUIState = MutableStateFlow(TasksUIState())
     val state: StateFlow<TasksUIState> = _tasksUIState
+
+    init {
+        getAllTasks()
+    }
+
+    private fun getAllTasks() {
+        tasksUseCases.getAllTasksUseCase()
+            .onEach { tasks ->
+                _tasksUIState.update { currentState ->
+                    currentState.copy(tasks = tasks)
+                }
+            }.launchIn(viewModelScope)
+    }
 
     fun onEvent(event: TasksEvent) {
         when (event) {
@@ -36,7 +52,16 @@ class TasksViewModel @Inject constructor(
             }
 
             is TasksEvent.ChangeShowingStatus -> {
-
+                val taskFlow = when (event.status) {
+                    is ShowingListStatus.All -> tasksUseCases.getAllTasksUseCase()
+                    is ShowingListStatus.Completed -> tasksUseCases.filterTasksUseCase(true)
+                    is ShowingListStatus.OnGoing -> tasksUseCases.filterTasksUseCase(false)
+                }
+                taskFlow
+                    .onEach { tasks ->
+                        _tasksUIState.update { it.copy(tasks = tasks) }
+                    }
+                    .launchIn(viewModelScope)
             }
         }
     }
