@@ -69,7 +69,18 @@ class TasksViewModel @Inject constructor(
 
             is TasksEvent.UpdateTaskStatus -> {
                 viewModelScope.launch {
-                    tasksUseCases.insertTaskUseCase.invoke(event.task)
+                    tasksUseCases.insertTaskUseCase.invoke(event.task.copy(completed = event.isCompleted))
+                    _tasksUIState.update {
+                        it.copy(
+                            tasks = it.tasks.map { task ->
+                                if (task.id == event.task.id) {
+                                    task.copy(completed = event.isCompleted)
+                                } else {
+                                    task
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

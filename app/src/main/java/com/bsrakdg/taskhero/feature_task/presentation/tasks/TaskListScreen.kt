@@ -129,8 +129,8 @@ fun TaskListScreen(
                             onDeleteClick = {
                                 onEvent.invoke(TasksEvent.DeleteTask(task))
                             },
-                            onCheckBoxClick = {
-                                onEvent.invoke(TasksEvent.UpdateTaskStatus(task))
+                            onCheckBoxClick = { task, isCompleted ->
+                                onEvent.invoke(TasksEvent.UpdateTaskStatus(task, isCompleted))
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))

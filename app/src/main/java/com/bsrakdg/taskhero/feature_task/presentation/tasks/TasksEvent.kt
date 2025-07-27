@@ -8,5 +8,5 @@ sealed class TasksEvent {
     object ToggleStatusSection : TasksEvent()
     data class ChangeShowingStatus(val status: ShowingListStatus) : TasksEvent()
 
-    data class UpdateTaskStatus(val task: Task) : TasksEvent()
+    data class UpdateTaskStatus(val task: Task, val isCompleted: Boolean) : TasksEvent()
 }

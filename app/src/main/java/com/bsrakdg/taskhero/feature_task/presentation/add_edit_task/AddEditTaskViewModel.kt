@@ -7,16 +7,14 @@ import com.bsrakdg.taskhero.feature_task.domain.model.InvalidTaskException
 import com.bsrakdg.taskhero.feature_task.domain.model.Task
 import com.bsrakdg.taskhero.feature_task.domain.use_case.TasksUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEditViewModel @Inject constructor(
+class AddEditTaskViewModel @Inject constructor(
     private val tasksUseCases: TasksUseCases,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -33,9 +31,6 @@ class AddEditViewModel @Inject constructor(
         )
     )
     val taskContent: StateFlow<TaskTextFieldState> = _taskContent
-
-    private val _eventFlow = MutableSharedFlow<UiEvent>()
-    val eventFlow = _eventFlow.asSharedFlow()
 
     private var currentTaskId: Int? = null
 
@@ -107,21 +102,11 @@ class AddEditViewModel @Inject constructor(
                                 id = currentTaskId
                             )
                         )
-                        _eventFlow.emit(UiEvent.SaveNote)
                     } catch (e: InvalidTaskException) {
-                        _eventFlow.emit(
-                            UiEvent.ShowSnackBar(
-                                message = e.message ?: "Could not save task"
-                            )
-                        )
+
                     }
                 }
             }
         }
-    }
-
-    sealed class UiEvent {
-        data class ShowSnackBar(val message: String) : UiEvent()
-        object SaveNote : UiEvent()
     }
 }

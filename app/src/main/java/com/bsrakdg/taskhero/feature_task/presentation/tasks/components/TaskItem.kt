@@ -29,10 +29,12 @@ fun TaskItem(
     task: Task,
     modifier: Modifier = Modifier,
     onDeleteClick: (task: Task) -> Unit,
-    onCheckBoxClick: (task: Task) -> Unit
+    onCheckBoxClick: (task: Task, isCompleted: Boolean) -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().aspectRatio(1.5f)
+        modifier = modifier
+            .fillMaxWidth()
+            .aspectRatio(1.5f)
     ) {
         Column(
             modifier = Modifier
@@ -68,11 +70,11 @@ fun TaskItem(
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        Row (modifier = Modifier.align(Alignment.BottomStart)){
+        Row(modifier = Modifier.align(Alignment.BottomStart)) {
             Checkbox(
                 checked = task.completed,
-                onCheckedChange = {
-                    onCheckBoxClick.invoke(task)
+                onCheckedChange = { isChecked ->
+                    onCheckBoxClick.invoke(task, isChecked)
                 }
             )
         }
@@ -91,5 +93,5 @@ fun TaskItemPreview() {
             id = 1
         ),
         onDeleteClick = {}
-    ) {}
+    ) { _, _ -> }
 }

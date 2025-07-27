@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,6 +14,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.bsrakdg.taskhero.feature_task.presentation.add_edit_task.AddEditTaskScreen
+import com.bsrakdg.taskhero.feature_task.presentation.add_edit_task.AddEditTaskViewModel
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TaskListScreen
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TasksViewModel
 import com.bsrakdg.taskhero.feature_task.presentation.util.Screen
@@ -40,16 +41,16 @@ class MainActivity : ComponentActivity() {
                             TaskListScreen(
                                 uiState = uiState,
                                 onEvent = viewModel::onEvent,
-                                navigate = { id ->
+                                navigate = { taskId ->
                                     navController.navigate(
-                                        Screen.TaskListScreen.route + "?taskId=${id}"
+                                        Screen.EditTaskScreen.route + "?taskId=${taskId}"
                                     )
                                 }
                             )
                         }
 
                         composable(
-                            route = Screen.EditTaskScreen.route + "$taskId={taskId}",
+                            route = Screen.EditTaskScreen.route + "?taskId={taskId}",
                             arguments = listOf(
                                 navArgument(
                                     name = "taskId"
@@ -59,7 +60,17 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
-
+                            val viewModel = hiltViewModel<AddEditTaskViewModel>()
+                            val taskTitle = viewModel.taskTitle.collectAsStateWithLifecycle()
+                            val taskContent = viewModel.taskContent.collectAsStateWithLifecycle()
+                            AddEditTaskScreen(
+                                taskTitle = taskTitle.value,
+                                taskContent = taskContent.value,
+                                navigate = {
+                                    navController.navigateUp()
+                                },
+                                onEvent = viewModel::onEvent
+                            )
                         }
                     }
                 }
