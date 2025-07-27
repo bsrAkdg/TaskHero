@@ -18,7 +18,7 @@ class TasksViewModel @Inject constructor(
     private val tasksUseCases: TasksUseCases
 ) : ViewModel() {
     private val _tasksUIState = MutableStateFlow(TasksUIState())
-    val state: StateFlow<TasksUIState> = _tasksUIState
+    val taskUIState: StateFlow<TasksUIState> = _tasksUIState
 
     init {
         getAllTasks()
@@ -52,16 +52,25 @@ class TasksViewModel @Inject constructor(
             }
 
             is TasksEvent.ChangeShowingStatus -> {
+                _tasksUIState.update { it.copy(status = event.status) }
+
                 val taskFlow = when (event.status) {
                     is ShowingListStatus.All -> tasksUseCases.getAllTasksUseCase()
                     is ShowingListStatus.Completed -> tasksUseCases.filterTasksUseCase(true)
                     is ShowingListStatus.OnGoing -> tasksUseCases.filterTasksUseCase(false)
                 }
+
                 taskFlow
                     .onEach { tasks ->
                         _tasksUIState.update { it.copy(tasks = tasks) }
                     }
                     .launchIn(viewModelScope)
+            }
+
+            is TasksEvent.UpdateTaskStatus -> {
+                viewModelScope.launch {
+                    tasksUseCases.insertTaskUseCase.invoke(event.task)
+                }
             }
         }
     }

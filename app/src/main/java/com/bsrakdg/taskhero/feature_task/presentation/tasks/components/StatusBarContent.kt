@@ -33,7 +33,7 @@ fun StatusBarContent(
                 onShowingListStatusChange.invoke(ShowingListStatus.All())
             }
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(2.dp))
         DefaultRadioButton(
             headerText = "ONGOING",
             isSelected = showingListStatus is ShowingListStatus.OnGoing,
@@ -41,7 +41,7 @@ fun StatusBarContent(
                 onShowingListStatusChange.invoke(ShowingListStatus.OnGoing())
             }
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(2.dp))
         DefaultRadioButton(
             headerText = "COMPLETED",
             isSelected = showingListStatus is ShowingListStatus.Completed,
@@ -71,10 +71,9 @@ fun DefaultRadioButton(
                 unselectedColor = Color(0xFF90CAF9)
             )
         )
-
         Text(
             text = headerText,
-            style = MaterialTheme.typography.bodyLarge.copy(
+            style = MaterialTheme.typography.bodyMedium.copy(
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurface
             )

@@ -7,4 +7,6 @@ sealed class TasksEvent {
     data class DeleteTask(val task: Task) : TasksEvent()
     object ToggleStatusSection : TasksEvent()
     data class ChangeShowingStatus(val status: ShowingListStatus) : TasksEvent()
+
+    data class UpdateTaskStatus(val task: Task) : TasksEvent()
 }

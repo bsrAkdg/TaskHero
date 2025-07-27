@@ -7,7 +7,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +21,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,7 +41,8 @@ import com.bsrakdg.taskhero.feature_task.presentation.tasks.components.TaskItem
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun TaskListScreen(
-    tasksUIState: TasksUIState,
+    uiState: TasksUIState,
+    navigate: (taskId: Int) -> Unit,
     onEvent: (TasksEvent) -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.surface
@@ -53,7 +53,9 @@ fun TaskListScreen(
         modifier = Modifier.background(backgroundColor),
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { },
+                onClick = {
+                    navigate.invoke(-1)
+                },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
             ) {
@@ -82,27 +84,28 @@ fun TaskListScreen(
                     )
                     IconButton(
                         onClick = {
-                            // TODO: Handle sort click
+                            onEvent.invoke(TasksEvent.ToggleStatusSection)
                         },
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = MaterialTheme.colorScheme.primary
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Default.AddCircle,
+                            imageVector = Icons.Default.Menu,
                             contentDescription = "Sort"
                         )
                     }
                 }
 
                 AnimatedVisibility(
-                    visible = tasksUIState.isStatusBarVisible,
+                    visible = uiState.isStatusBarVisible,
                     enter = fadeIn() + slideInVertically(),
                     exit = fadeOut() + slideOutVertically()
                 ) {
                     StatusBarContent(
-                        onShowingListStatusChange = {
-                            // TODO: Implement callback
+                        showingListStatus = uiState.status,
+                        onShowingListStatusChange = { status ->
+                            onEvent.invoke(TasksEvent.ChangeShowingStatus(status = status))
                         }
                     )
                 }
@@ -111,7 +114,7 @@ fun TaskListScreen(
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     itemsIndexed(
-                        tasksUIState.tasks,
+                        uiState.tasks,
                         key = { _, task -> task.id ?: task.hashCode() }
                     ) { index, task ->
                         TaskItem(
@@ -122,15 +125,12 @@ fun TaskListScreen(
                                 .background(
                                     color = taskItemColor,
                                     shape = RoundedCornerShape(8.dp)
-                                )
-                                .clickable {
-                                    // TODO: Handle task click
-                                },
+                                ),
                             onDeleteClick = {
-                                // TODO: Handle delete
+                                onEvent.invoke(TasksEvent.DeleteTask(task))
                             },
                             onCheckBoxClick = {
-                                // TODO: Handle check
+                                onEvent.invoke(TasksEvent.UpdateTaskStatus(task))
                             }
                         )
                         Spacer(modifier = Modifier.height(12.dp))
@@ -147,7 +147,7 @@ fun TaskListScreen(
 @Preview
 fun TaskListScreenPreview() {
     TaskListScreen(
-        tasksUIState = TasksUIState(
+        uiState = TasksUIState(
             tasks = List(10) { index ->
                 Task(
                     title = "title",
@@ -158,6 +158,7 @@ fun TaskListScreenPreview() {
                 )
             }
         ),
+        navigate = {},
         onEvent = {}
     )
 }
