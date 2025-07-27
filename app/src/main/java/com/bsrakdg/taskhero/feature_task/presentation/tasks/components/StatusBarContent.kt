@@ -12,12 +12,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus
 
 @Composable
-fun StatusBarSection(
+fun StatusBarContent(
     modifier: Modifier = Modifier,
     showingListStatus: ShowingListStatus = ShowingListStatus.All(),
     onShowingListStatusChange: (ShowingListStatus) -> Unit
@@ -42,7 +43,7 @@ fun StatusBarSection(
         )
         Spacer(modifier = Modifier.width(8.dp))
         DefaultRadioButton(
-            headerText = "Title",
+            headerText = "COMPLETED",
             isSelected = showingListStatus is ShowingListStatus.Completed,
             onSelected = {
                 onShowingListStatusChange.invoke(ShowingListStatus.Completed())
@@ -66,12 +67,18 @@ fun DefaultRadioButton(
             selected = isSelected,
             onClick = onSelected,
             colors = RadioButtonDefaults.colors(
-                selectedColor = Color.Unspecified,
-                unselectedColor = Color.Blue
+                selectedColor = Color(0xFF1E88E5),
+                unselectedColor = Color(0xFF90CAF9)
             )
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = headerText, style = MaterialTheme.typography.bodyMedium)
+
+        Text(
+            text = headerText,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        )
     }
 }
 
@@ -82,4 +89,10 @@ private fun RadioButtonPreview() {
         isSelected = false,
         headerText = "headerText"
     ) {}
+}
+
+@Composable
+@Preview
+private fun StatusBarSectionPreview() {
+    StatusBarContent {}
 }
