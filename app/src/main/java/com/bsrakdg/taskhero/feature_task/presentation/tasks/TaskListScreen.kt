@@ -46,6 +46,7 @@ fun TaskListScreen(
     uiState: TasksUIState,
     navigate: (taskId: Int) -> Unit,
     setDarkMode: (isChecked: Boolean) -> Unit,
+    setCurrentFilter: (Int) -> Unit,
     darkModeState: Boolean,
     onEvent: (TasksEvent) -> Unit,
 ) {
@@ -114,6 +115,7 @@ fun TaskListScreen(
                         StatusBarContent(
                             showingListStatus = uiState.status,
                             onShowingListStatusChange = { status ->
+                                setCurrentFilter.invoke(status.toIndex())
                                 onEvent.invoke(TasksEvent.ChangeShowingStatus(status = status))
                             }
                         )
@@ -184,6 +186,7 @@ fun TaskListScreenPreview() {
         navigate = {},
         setDarkMode = {},
         darkModeState = false,
+        setCurrentFilter = {},
         onEvent = {}
     )
 }

@@ -22,6 +22,7 @@ import com.bsrakdg.taskhero.feature_task.presentation.tasks.TaskListScreen
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TasksEvent
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TasksViewModel
 import com.bsrakdg.taskhero.feature_task.presentation.util.Screen
+import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus
 import com.bsrakdg.taskhero.feature_task.presentation.util.ThemePreferenceManager
 import com.bsrakdg.taskhero.ui.theme.TaskHeroTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +41,10 @@ class MainActivity : ComponentActivity() {
                 .getDarkModeFlow(applicationContext)
                 .collectAsState(initial = false)
 
+            val currentFilter by ThemePreferenceManager
+                .getCurrentFilter(applicationContext)
+                .collectAsState(initial = 0)
+
             TaskHeroTheme(darkTheme = darkModeState) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
@@ -52,6 +57,7 @@ class MainActivity : ComponentActivity() {
                             val viewModel = hiltViewModel<TasksViewModel>()
                             val uiState by viewModel.taskUIState.collectAsStateWithLifecycle()
                             viewModel.onEvent(TasksEvent.UpdateTheme(darkModeState))
+                            viewModel.onEvent(TasksEvent.ChangeShowingStatus(ShowingListStatus.fromIndex(currentFilter)))
                             TaskListScreen(
                                 uiState = uiState,
                                 onEvent = viewModel::onEvent,
@@ -61,6 +67,14 @@ class MainActivity : ComponentActivity() {
                                         ThemePreferenceManager.setDarkMode(
                                             context = applicationContext,
                                             isDarkMode = isDark
+                                        )
+                                    }
+                                },
+                                setCurrentFilter = { currentFilter ->
+                                    lifecycleScope.launch {
+                                        ThemePreferenceManager.setCurrentFilter(
+                                            context = applicationContext,
+                                            currentFilter = currentFilter
                                         )
                                     }
                                 },

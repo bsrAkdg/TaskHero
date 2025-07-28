@@ -16,11 +16,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus
+import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus.*
 
 @Composable
 fun StatusBarContent(
     modifier: Modifier = Modifier,
-    showingListStatus: ShowingListStatus = ShowingListStatus.All(),
+    showingListStatus: ShowingListStatus = All,
     onShowingListStatusChange: (ShowingListStatus) -> Unit
 ) {
     Row(
@@ -28,25 +29,25 @@ fun StatusBarContent(
     ) {
         DefaultRadioButton(
             headerText = "ALL",
-            isSelected = showingListStatus is ShowingListStatus.All,
+            isSelected = showingListStatus is All,
             onSelected = {
-                onShowingListStatusChange.invoke(ShowingListStatus.All())
+                onShowingListStatusChange.invoke(All)
             }
         )
         Spacer(modifier = Modifier.width(2.dp))
         DefaultRadioButton(
             headerText = "ONGOING",
-            isSelected = showingListStatus is ShowingListStatus.OnGoing,
+            isSelected = showingListStatus is OnGoing,
             onSelected = {
-                onShowingListStatusChange.invoke(ShowingListStatus.OnGoing())
+                onShowingListStatusChange.invoke(OnGoing)
             }
         )
         Spacer(modifier = Modifier.width(2.dp))
         DefaultRadioButton(
             headerText = "COMPLETED",
-            isSelected = showingListStatus is ShowingListStatus.Completed,
+            isSelected = showingListStatus is Completed,
             onSelected = {
-                onShowingListStatusChange.invoke(ShowingListStatus.Completed())
+                onShowingListStatusChange.invoke(Completed)
             }
         )
     }
