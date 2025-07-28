@@ -83,6 +83,14 @@ class TasksViewModel @Inject constructor(
                     }
                 }
             }
+
+            is TasksEvent.UpdateTheme -> {
+                _tasksUIState.update {
+                    it.copy(
+                        darkMode = event.isChecked
+                    )
+                }
+            }
         }
     }
 }

@@ -6,9 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,20 +19,31 @@ import androidx.navigation.navArgument
 import com.bsrakdg.taskhero.feature_task.presentation.add_edit_task.AddEditTaskScreen
 import com.bsrakdg.taskhero.feature_task.presentation.add_edit_task.AddEditTaskViewModel
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TaskListScreen
+import com.bsrakdg.taskhero.feature_task.presentation.tasks.TasksEvent
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.TasksViewModel
 import com.bsrakdg.taskhero.feature_task.presentation.util.Screen
+import com.bsrakdg.taskhero.feature_task.presentation.util.ThemePreferenceManager
 import com.bsrakdg.taskhero.ui.theme.TaskHeroTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            TaskHeroTheme {
+
+            val darkModeState by ThemePreferenceManager
+                .getDarkModeFlow(applicationContext)
+                .collectAsState(initial = false)
+
+            TaskHeroTheme(darkTheme = darkModeState) {
                 Surface(color = MaterialTheme.colorScheme.background) {
                     val navController = rememberNavController()
+
                     NavHost(
                         navController = navController,
                         startDestination = Screen.TaskListScreen.route
@@ -38,12 +51,22 @@ class MainActivity : ComponentActivity() {
                         composable(route = Screen.TaskListScreen.route) {
                             val viewModel = hiltViewModel<TasksViewModel>()
                             val uiState by viewModel.taskUIState.collectAsStateWithLifecycle()
+                            viewModel.onEvent(TasksEvent.UpdateTheme(darkModeState))
                             TaskListScreen(
                                 uiState = uiState,
                                 onEvent = viewModel::onEvent,
+                                darkModeState = darkModeState,
+                                setDarkMode = { isDark ->
+                                    lifecycleScope.launch {
+                                        ThemePreferenceManager.setDarkMode(
+                                            context = applicationContext,
+                                            isDarkMode = isDark
+                                        )
+                                    }
+                                },
                                 navigate = { taskId ->
                                     navController.navigate(
-                                        Screen.EditTaskScreen.route + "?taskId=${taskId}"
+                                        Screen.EditTaskScreen.route + "?taskId=$taskId"
                                     )
                                 }
                             )
@@ -52,23 +75,20 @@ class MainActivity : ComponentActivity() {
                         composable(
                             route = Screen.EditTaskScreen.route + "?taskId={taskId}",
                             arguments = listOf(
-                                navArgument(
-                                    name = "taskId"
-                                ) {
+                                navArgument("taskId") {
                                     type = NavType.IntType
                                     defaultValue = -1
                                 }
                             )
                         ) {
                             val viewModel = hiltViewModel<AddEditTaskViewModel>()
-                            val taskTitle = viewModel.taskTitle.collectAsStateWithLifecycle()
-                            val taskContent = viewModel.taskContent.collectAsStateWithLifecycle()
+                            val taskTitle by viewModel.taskTitle.collectAsStateWithLifecycle()
+                            val taskContent by viewModel.taskContent.collectAsStateWithLifecycle()
+
                             AddEditTaskScreen(
-                                taskTitle = taskTitle.value,
-                                taskContent = taskContent.value,
-                                navigate = {
-                                    navController.navigateUp()
-                                },
+                                taskTitle = taskTitle,
+                                taskContent = taskContent,
+                                navigate = { navController.navigateUp() },
                                 onEvent = viewModel::onEvent
                             )
                         }

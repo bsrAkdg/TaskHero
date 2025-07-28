@@ -30,11 +30,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bsrakdg.taskhero.feature_task.domain.model.Task
+import com.bsrakdg.taskhero.feature_task.presentation.tasks.components.DefaultRadioButton
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.components.StatusBarContent
 import com.bsrakdg.taskhero.feature_task.presentation.tasks.components.TaskItem
 
@@ -43,11 +45,17 @@ import com.bsrakdg.taskhero.feature_task.presentation.tasks.components.TaskItem
 fun TaskListScreen(
     uiState: TasksUIState,
     navigate: (taskId: Int) -> Unit,
+    setDarkMode: (isChecked: Boolean) -> Unit,
+    darkModeState: Boolean,
     onEvent: (TasksEvent) -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.surface
     val taskItemColor = MaterialTheme.colorScheme.surfaceVariant
     val titleColor = MaterialTheme.colorScheme.onSurface
+
+    LaunchedEffect(true) {
+        onEvent.invoke(TasksEvent.UpdateTheme(darkModeState))
+    }
 
     Scaffold(
         modifier = Modifier.background(backgroundColor),
@@ -102,12 +110,22 @@ fun TaskListScreen(
                     enter = fadeIn() + slideInVertically(),
                     exit = fadeOut() + slideOutVertically()
                 ) {
-                    StatusBarContent(
-                        showingListStatus = uiState.status,
-                        onShowingListStatusChange = { status ->
-                            onEvent.invoke(TasksEvent.ChangeShowingStatus(status = status))
-                        }
-                    )
+                    Column {
+                        StatusBarContent(
+                            showingListStatus = uiState.status,
+                            onShowingListStatusChange = { status ->
+                                onEvent.invoke(TasksEvent.ChangeShowingStatus(status = status))
+                            }
+                        )
+                        DefaultRadioButton(
+                            headerText = "Dark Mode",
+                            isSelected = uiState.darkMode,
+                            onSelected = {
+                                setDarkMode.invoke(!uiState.darkMode)
+                                onEvent.invoke(TasksEvent.UpdateTheme(!uiState.darkMode))
+                            }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -164,6 +182,8 @@ fun TaskListScreenPreview() {
             }
         ),
         navigate = {},
+        setDarkMode = {},
+        darkModeState = false,
         onEvent = {}
     )
 }

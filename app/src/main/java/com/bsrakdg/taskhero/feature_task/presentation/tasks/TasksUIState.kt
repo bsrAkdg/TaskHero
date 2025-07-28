@@ -7,5 +7,6 @@ import com.bsrakdg.taskhero.feature_task.presentation.util.ShowingListStatus.*
 data class TasksUIState(
     val tasks: List<Task> = listOf(),
     val status: ShowingListStatus = All(),
-    val isStatusBarVisible: Boolean = false
+    val isStatusBarVisible: Boolean = false,
+    val darkMode: Boolean = false
 )

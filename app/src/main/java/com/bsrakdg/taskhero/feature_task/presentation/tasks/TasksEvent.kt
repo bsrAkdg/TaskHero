@@ -9,4 +9,6 @@ sealed class TasksEvent {
     data class ChangeShowingStatus(val status: ShowingListStatus) : TasksEvent()
 
     data class UpdateTaskStatus(val task: Task, val isCompleted: Boolean) : TasksEvent()
+
+    data class UpdateTheme(val isChecked: Boolean) : TasksEvent()
 }
