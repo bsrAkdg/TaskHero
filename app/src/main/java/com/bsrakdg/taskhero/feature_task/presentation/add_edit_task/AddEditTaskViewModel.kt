@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddEditTaskViewModel @Inject constructor(
     private val tasksUseCases: TasksUseCases,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val _taskTitle = MutableStateFlow(
         TaskTextFieldState(
